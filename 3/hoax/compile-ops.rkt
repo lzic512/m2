@@ -202,15 +202,22 @@
        (seq (Pop r8)                    ; r8 = original vector
             (assert-vector r8)
             (Xor r8 type-vect)
-            (Add r8 8)                  ; move r8 to first element
+	    (Mov 'r11 (Offset r8 0))     ;; Get original length
 
             (assert-natural rax)        ; rax = size
+	    (Mov r10 rax)
+	    (Sar r10 int-shift)
+	    (Cmp 'r11 r10)
+	    (Jl 'err)
+
             (Cmp rax 0)                 ; special case empty result vector
             (Je empty)
 
+	    (Add r8 8)                  ; move r8 to first element
+
             (Mov r9 rbx)                ; r9 = new result vector
             (Or r9 type-vect)
-            (Sar rax int-shift)
+	    (Sar rax int-shift)
             (Mov (Offset rbx 0) rax)
             (Add rbx 8)
 

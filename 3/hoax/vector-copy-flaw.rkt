@@ -1,4 +1,3 @@
 #lang racket
-;; NOTE: New file.
-;; TODO: Write a program below demonstrating the flaw.
-(add1 0)
+;; The vector copy you guys made does not check for a valid range
+(let ((x (make-vector 3 42))) (vector-copy* x 15))

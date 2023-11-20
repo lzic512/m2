@@ -54,12 +54,27 @@
     ;; NOTE: New.
     ;; TODO: Complete the implementation according to the specifications.
     [(DefaultDefn f xs x d e)
-     (seq (Label (symbol->label f))
-          (Cmp r8 (add1 (length xs)))
-          (Jne 'err)
-          (compile-e e (cons x (reverse xs)))
-          (Add rsp (* 8 (add1 (length xs)))) ; pop args
-          (Ret))]))
+     (let ((d_val (gensym 'default))
+	  (x_val (gensym 'default))
+	  (finished (gensym 'default)))
+     (seq
+          (Label (symbol->label f)) 
+	  (Cmp r8 (length xs))
+	  (Je d_val)
+	  (Cmp r8 (add1 (length xs)))
+	  (Jne 'err)
+	  (compile-e e (cons x (reverse xs)))
+	  (Jmp finished)
+	  (Label d_val)
+	  (compile-e d '())
+	  (Push 'rax)
+	  (compile-e e (cons x (reverse xs)))
+	  (Label finished)
+	  (Add rsp (* 8 (add1 (length xs)))) ; pop args
+          (Ret)))]))
+
+(define (defn-compile-helper xs x e)
+  	(compile-e e (cons x (reverse xs))))
 
 ;; type CEnv = (Listof [Maybe Id])
 ;; Expr CEnv -> Asm

@@ -129,7 +129,16 @@
        [r1 (interp-match-pat p2 v r1 ds)])]
     ;; TODO: Implement the `?` pattern.
     [(Pred f p)
-     'err]
+     (match (interp-match-pat p v r ds)
+       [#f #f]
+       [r1 
+        (match (defns-lookup ds f)
+         [(Defn f xs e)
+          (match (interp-env e (zip xs (list v)) ds)
+            ['err 'err]
+            [boo (if boo 
+		   (interp-match-pat p v r ds)
+		   #f)])])])]
     ;; NOTE: New.
     [(Apppat f p)
      (match (defns-lookup ds f)

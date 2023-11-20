@@ -311,9 +311,19 @@
            cm1))])]
     ;; TODO: Implement the `app` pattern.
     [(Apppat f p)
+      (match (compile-pattern p cm next)
+        [(list i1 cm1)
+         (let ((q (gensym)))
+         (list
+         (seq (Lea rax q)
+         (Push rax)
+         (Mov rax (Offset rsp 8))
+         (Push rax)
+         (Jmp (symbol->label f))
+         (Label q)
+	 i1)
+       cm1))])]))
      ;; NOTE: Replace this code. It just produces 'err.
-     (list (seq (Jmp 'err))
-           (cadr (compile-pattern p cm next)))]))
 
 ;; Id CEnv -> Integer
 (define (lookup x cenv)

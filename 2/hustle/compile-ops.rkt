@@ -119,7 +119,12 @@
           if-equal)]
     ;; TODO: Implement this!
     ['set-box!
-     (seq (Jmp 'err))]))
+     (seq (Pop r8)
+	  (assert-box r8)
+	  (Xor r8 type-box)
+	  (Mov (Offset r8 0) rax)
+          (Mov rax (value->bits (void))))]
+    ))
 
 
 ;; -> Asm
